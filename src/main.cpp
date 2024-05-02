@@ -55,19 +55,51 @@
 //}
 
 double hit_sphere(const point3 &center, double radius, const ray &r) {
-    // center of sphere from the rays origin (i.e pixel in cam)
-    vec3 oc = center - r.origin();
-    // dot product of the ray's direction.
-    auto a = r.direction().length_squared();
-    auto h = dot(r.direction(), oc);
-    auto c = oc.length_squared() - radius * radius;
-    auto discriminant = h * h - a * c;
 
-    if (discriminant < 0) {
-        return -1.0;
-    } else {
-        return (h - sqrt(discriminant)) / a;
-    }
+    /*
+    * POINT IN A SPHERE
+    * To see if a point is within a sphere we can use x² + y² + z² < r²
+    * Same for outside of a square x² + y² + z² < r²
+    * However when we need to move the location of the sphere around a different origin
+    * it gets a little more complex.
+    *
+    * So we can simplify this, by thinking of the left hand size in terms of the entire vector.
+    * if we think of x² + y² + z² in terms of its vector P we can use a dot product:
+    * - P⋅P = r²
+    * Which makes it easier to do other things on the vec3 like move the spheres origin with:
+    * - (C-P)⋅(C-P) = (cx - x)² + (cy - y)² + (cz - z)²
+    * - (C-P)⋅(C-P) = r²
+    *
+    * We now have a way to see if a single point P is within the radius of a circle at center C;
+    * However we are casting a ray which is represented as:
+    * Q = top right origin of camera
+    * d = direction
+    * t = index of the ray
+    * P(t) = Q + td
+    *
+    * We want to cast our ray to see if any point t is within the circle with represented as:
+    * (𝐂−𝐏(𝑡))⋅(𝐂−𝐏(𝑡)) = 𝑟²
+    * We can find this by expanding our P(t) to:
+    * (𝐂−(𝐐+𝑡𝐝))⋅(𝐂−(𝐐+𝑡𝐝)) = 𝑟²
+    *
+    * We need to solve for t so we can separate terms based on whether theres is a t or not. 
+    * (−𝑡𝐝+(𝐂−𝐐))⋅(−𝑡𝐝+(𝐂−𝐐)) = 𝑟²
+    */
+
+
+    // // center of sphere from the rays origin (i.e pixel in cam)
+    // vec3 oc = center - r.origin();
+    // // dot product of the ray's direction.
+    // auto a = r.direction().length_squared();
+    // auto h = dot(r.direction(), oc);
+    // auto c = oc.length_squared() - radius * radius;
+    // auto discriminant = h * h - a * c;
+    //
+    // if (discriminant < 0) {
+    //     return -1.0;
+    // } else {
+    //     return (h - sqrt(discriminant)) / a;
+    // }
 }
 
 color ray_color(const ray &r) {
